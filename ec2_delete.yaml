@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Get instance ID by public IP
+      amazon.aws.ec2_metadata_facts:
+        filters:
+          public_ip: "{{ hostvars[inventory_hostname]['ansible_host'] }}"  
+      register: result
+
+    - name: Show instance ID
+      debug:
+        var: result
+
+- name: Terminate EC2 Instance Using Public IP
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Get instance ID from public IP
+      amazon.aws.ec2_instance_info:
+        filters:
+          public_ip: "{{ hostvars[inventory_hostname]['ansible_host'] }}"  # Fetch the public IP from the inventory
+        region: us-west-2 
+      register: ec2_info
+
+    - name: Terminate EC2 instance
+      amazon.aws.ec2_instance:
+        instance_ids:
+          - "{{ ec2_info.instances[0].instance_id }}"
+        state: absent
+        region: us-west-2
+        aws_access_key: "{{ access_key }}"  # Optional
+        aws_secret_key: "{{ secret_key }}"  # Optional
+      register: result
+
+    - name: Show termination result
+      debug:
+        var: result

@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true # to run the playbook by root user
+  gather_facts: true
+  
+  tasks:
+  # - name: printing all the gather facts 
+   #  ansible.builtin.debug:
+    #   var: ansible_facts
+      
+   - name: shutdown ubuntu instances only
+     ansible.builtin.command: /sbin/shutdown -t now 
+     when:
+       ansible_os_family == "RedHat" 

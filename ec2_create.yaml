@@ -1,0 +1,24 @@
+--- 
+- hosts: localhost
+  connection: local
+  vars: #local connection defaults to using the system python
+    ansible_python_interpreter: "/home/manish/assignment1/env/bin/python3"
+    ansible_localhost_warning: false
+  tasks:
+  - name: create a instance 
+    amazon.aws.ec2_instance:
+      name: "{{ item.name }}"
+      instance_type: t2.micro
+      key_name: "instance"
+      security_group: default
+      region: ap-south-1
+      aws_access_key: "{{ ec2_access_key }}"  # From vault as defined
+      aws_secret_key: "{{ ec2_secret_key }}"  # From vault as defined      
+      network:
+        assign_public_ip: true 
+      image_id: "{{ item.image }}"
+    
+    loop:
+      - { image: "ami-00bb6a80f01f03502", name: "manage-node-1" }
+      - { image: "ami-0b7207e48d1b6c06f", name: "manage-node-3"}
+     

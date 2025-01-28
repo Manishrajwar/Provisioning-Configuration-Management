@@ -1,0 +1,7 @@
+task1: 
+create three ec2 instances => 2 ubuntu and 1 aws linux => use of loop 
+
+task2: setup the password less authentication in all instances
+
+task3: automate the shutdown on ubuntu instances only using condition (when condition)
+
